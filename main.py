@@ -1,7 +1,7 @@
 import requests
 import wget
-from os import getcwd, remove
-from shutil import rmtree
+from os import getcwd, remove, listdir
+from shutil import copy, rmtree, move
 from zipfile import ZipFile
 from pathlib import Path
 from configparser import ConfigParser
@@ -10,7 +10,8 @@ from configparser import ConfigParser
 config_auto_update_file = getcwd() + r'/config-auto-update.ini'
 config = ConfigParser(interpolation=None)
 config.read(config_auto_update_file)
-filename_compressed_path = getcwd() + r'/' + config.get('File', 'id') + r'.zip'
+filename_compressed_path = getcwd() + r'/' + config.get('File', 'id') + r'-main.zip'
+dir_uncompressed_path = getcwd() + r'/' + config.get('File', 'id') + r'-main'
 junk_files = [
     filename_compressed_path]
 url_last_readme = r'https://github.com/JonaRanto/' + config.get('File', 'id') + r'/raw/main/README.md'
@@ -49,6 +50,10 @@ def descomprimir_zip():
     try:
         zip_file = ZipFile(filename_compressed_path, "r")
         zip_file.extractall(path=getcwd())
+        # Mover todos los archivos de la carpeta que se descomprimió a la carpeta raíz
+        file_list = listdir(dir_uncompressed_path)
+        for file in file_list:
+            move(dir_uncompressed_path + r'/' + file, getcwd() + r'/' + file)
         resp = True
     except:
         print('Ha ocurrido un error al descomprimir')
