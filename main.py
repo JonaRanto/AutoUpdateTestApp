@@ -13,7 +13,8 @@ config.read(config_auto_update_file)
 filename_compressed_path = getcwd() + r'/' + config.get('File', 'id') + r'-main.zip'
 dir_uncompressed_path = getcwd() + r'/' + config.get('File', 'id') + r'-main'
 junk_files = [
-    filename_compressed_path]
+    filename_compressed_path,
+    dir_uncompressed_path]
 url_last_readme = r'https://github.com/JonaRanto/' + config.get('File', 'id') + r'/raw/main/README.md'
 url_app = r'https://github.com/JonaRanto/' + config.get('File', 'id') + r'/archive/refs/heads/main.zip'
 
