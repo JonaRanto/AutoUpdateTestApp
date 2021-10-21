@@ -1,7 +1,7 @@
 import requests
 import wget
-from os import getcwd, remove, listdir
-from shutil import copy, rmtree, move
+from os import getcwd, remove, listdir, rmdir
+from shutil import rmtree, move
 from zipfile import ZipFile
 from pathlib import Path
 from configparser import ConfigParser
