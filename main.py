@@ -68,6 +68,8 @@ def eliminar_archivos_basura():
         for junk_file in junk_files:
             if Path(junk_file).is_file():
                 remove(junk_file)
+            elif Path(junk_file).is_dir():
+                rmdir(junk_file)
         resp = True
     except:
         print('Ha ocurrido un error al intentar eliminar los archivos basura')
