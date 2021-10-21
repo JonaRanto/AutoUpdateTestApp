@@ -1,16 +1,89 @@
 import requests
+import wget
+from os import getcwd, remove
+from shutil import rmtree
+from zipfile import ZipFile
+from pathlib import Path
+from configparser import ConfigParser
 
-# Verificar versión
+
+config_auto_update_file = getcwd() + r'/config-auto-update.ini'
+config = ConfigParser(interpolation=None)
+config.read(config_auto_update_file)
+filename_compressed_path = getcwd() + r'/' + config.get('File', 'id') + r'.zip'
+junk_files = [
+    filename_compressed_path]
+url_last_readme = r'https://github.com/JonaRanto/' + config.get('File', 'id') + r'/raw/main/README.md'
+url_app = r'https://github.com/JonaRanto/' + config.get('File', 'id') + r'/archive/refs/heads/main.zip'
+
+
 def verificar_version():
-    url_last_readme = 'https://github.com/JonaRanto/AutoUpdateTestApp/raw/main/README.md'
+    print('Verificando versión')
     page = requests.get(url_last_readme)
     last_version = page.text.split('\n')[1].split('=')[1]
-    my_readme = open('README.md', 'r')
-    my_version = my_readme.read().split('\n')[1].split('=')[1]
-    resp = False
-    if my_version == last_version: resp = True
+    if not Path(getcwd() + r'/README.md').is_file():
+        resp = False
+    else:
+        my_readme = open('README.md', 'r')
+        my_version = my_readme.read().split('\n')[1].split('=')[1]
+        my_readme.close()
+        resp = False
+        if my_version == last_version: resp = True
     return resp
+
+
+def descargar_ultima_version():
+    print('Descargando ultima version')
+    try:
+        wget.download(url_app, getcwd())
+        print('')
+        resp = True
+    except:
+        print('Ha ocurrido un error al descargar la ultima version')
+        resp = False
+    return resp
+    
+
+def descomprimir_zip():
+    print('Descomprimiendo archivos')
+    try:
+        zip_file = ZipFile(filename_compressed_path, "r")
+        zip_file.extractall(path=getcwd())
+        resp = True
+    except:
+        print('Ha ocurrido un error al descomprimir')
+        resp = False
+    return resp
+
+
+def eliminar_archivos_basura():
+    print('Eliminando archivos basura')
+    try:
+        for junk_file in junk_files:
+            if Path(junk_file).is_file():
+                remove(junk_file)
+        resp = True
+    except:
+        print('Ha ocurrido un error al intentar eliminar los archivos basura')
+        resp = False
+    return resp
+
+
+def eliminar_todo():
+    try:
+        print('Eliminando archivos')
+        rmtree(getcwd(), ignore_errors=True)
+        resp = True
+    except:
+        resp = False
+    return resp
+
+
 if not verificar_version():
-    print('La aplicación está desactualziada :C')
+    if eliminar_todo():
+        if descargar_ultima_version():
+            if descomprimir_zip():
+                if eliminar_archivos_basura():
+                    print('Se ha actualizado correctamente!')
 else:
     print('La aplicación está actualziada ^^')

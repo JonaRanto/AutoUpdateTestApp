@@ -1,2 +1,2 @@
-# AutoUpdateTestApp
-version=1.0
+# AplicacionAutoactualizable
+version=1.1
